@@ -11,14 +11,13 @@ import android.widget.ListView;
 
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView lv;
     private ArrayList<Event> events = new ArrayList<>();
-
+    private ArrayList<String> eventsAsStrings = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,13 +25,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        events.add(new Event("Workout", "Rec Cen", new Time(12), new Time(1)));
+
+        //TODO: Hardcoded, remove later
+        events.add(new Event("Workout", "Rec Cen", new Time(11,30,0), new Time(11,45,0)));
+        events.add(new Event("Study", "Libary", new Time(12,15,0), new Time(12,45,0)));
+        events.add(new Event("Yolo", "foobar", new Time(3,20,0), new Time(4,0,0)));
+        upDateStringList(events, eventsAsStrings);
 
 
 
 
         lv = (ListView) findViewById(R.id.myList);
-        ArrayAdapter<Event> arrayAdapter = new ArrayAdapter<Event>(this, android.R.layout.simple_list_item_1, events);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, eventsAsStrings);
+
+
+
 
         lv.setAdapter(arrayAdapter);
 
@@ -47,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void upDateStringList(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
+        eventsAsStrings.clear();
+        for (int i = 0; i < events.size(); i++) {
+            eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() +
+                    "        Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString()));
+        }
     }
 
 }
