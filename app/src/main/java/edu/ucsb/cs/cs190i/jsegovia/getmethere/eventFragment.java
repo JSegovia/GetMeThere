@@ -20,6 +20,8 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static android.app.Activity.RESULT_OK;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.PLACE_PICKER_REQUEST;
@@ -88,6 +90,20 @@ public class eventFragment extends DialogFragment {
                 e.setEventLng(place.getLatLng().longitude);
 
                 events.add(e);
+                Collections.sort(events, new Comparator<Event>() {
+                    @Override
+                    public int compare(Event o1, Event o2) {
+                        if(o1.getEventEnd().before(o2.getEventStart())){
+                            return -1;
+                        }
+                        else if(o1.getEventEnd().after(o2.getEventStart())) {
+                            return 1;
+                        }
+                        else{
+                            return 0;
+                        }
+                    }
+                });
                 upDateStringsList(events, eventsAsStrings);
                 arrayAdapter.notifyDataSetChanged();
 
@@ -100,7 +116,11 @@ public class eventFragment extends DialogFragment {
                     eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() +
                             "        Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString()));
                 }
+
+
+
             }
+
 
         });
 
