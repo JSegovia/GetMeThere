@@ -29,14 +29,14 @@
         android:weightSum="1">
 
         <TimePicker
-            android:id="@+id/timePicker2"
+            android:id="@+id/StartTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:timePickerMode="spinner" />
 
         <TimePicker
-            android:id="@+id/timePicker"
+            android:id="@+id/EndTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
