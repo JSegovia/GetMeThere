@@ -95,6 +95,18 @@ public class eventFragment extends DialogFragment {
                 Time startTime = new Time(starter.getHour(),starter.getMinute(),0);
                 Time endTime = new Time(ender.getHour(),ender.getMinute(),0);
 
+                if (activity.getText().toString().length() == 0| eventLocation.getText().toString().length() == 0) {
+                    Toast.makeText(getActivity(), "Please fill in the text box(s)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    place.getLatLng();
+                } catch (NullPointerException e) {
+                    Toast.makeText(getActivity(), "Please pick a location", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (getTag() == "Fab") {
                     Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
                     e.setEventLat(place.getLatLng().latitude);
@@ -126,9 +138,11 @@ public class eventFragment extends DialogFragment {
                 });
                 upDateStringsList(events, eventsAsStrings);
                 arrayAdapter.notifyDataSetChanged();
-
+                getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
 
             }
+
+
 
             private void upDateStringsList(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
                 eventsAsStrings.clear();
@@ -143,9 +157,6 @@ public class eventFragment extends DialogFragment {
 
 
         });
-
-
-
 
         return view;
 

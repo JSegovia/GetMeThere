@@ -1,26 +1,35 @@
 package edu.ucsb.cs.cs190i.jsegovia.getmethere;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    public String GOOGLEAPIKEY = "AIzaSyCStlNWNT7L1QpJbTjq2nobVS25ZMIibv4";
+    public String GOOGLEAPIKEY = "AIzaSyAiD6SA2SIvZow_JTCEIax87SLhYyF9UTo";
     public static int PLACE_PICKER_REQUEST = 1;
     public static Context context;
     private PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -29,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Event> events = new ArrayList<>();
     public static ArrayList<String> eventsAsStrings = new ArrayList<>();
     public static Place place;
+    public static Place currentPlace;
     public static ArrayAdapter<String> arrayAdapter;
 
 
@@ -52,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        Button startLoc = (Button) findViewById(R.id.startLocation);
         lv = (ListView) findViewById(R.id.myList);
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, eventsAsStrings);
 
@@ -84,17 +94,70 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 eventFragment ef = new eventFragment();
                 ef.show(getFragmentManager(), "Fab");
+            }
+        });
 
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
 
+
+
+        startLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+
+                //String time = timeBetweenPlaces(currentPlace, place);
+                //System.out.println(time);
+
+            }
+
+        });
+
+    }
+
+    private String timeBetweenPlaces(Place currentPlace, Place place) {
+
+        Ion.with(this)
+                .load("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" +
+                        currentPlace.getLatLng().latitude + "," + currentPlace.getLatLng().longitude +
+                        "&destinations=" + place.getLatLng().latitude + "," + place.getLatLng().longitude + "&mode=bicycling&key=" + GOOGLEAPIKEY)
+                .asString().setCallback(new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+
+                try {
+                    JSONObject json = new JSONObject(result);
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
 
 
             }
-        });
+
+            });
+        return null;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                currentPlace = PlacePicker.getPlace(data, this);
+                String toastMsg = String.format("Place: %s", currentPlace.getName());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+                String time = timeBetweenPlaces(currentPlace, place);
+                System.out.println(time);
+
+            }
+        }
     }
 
     private void upDateStringList(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
