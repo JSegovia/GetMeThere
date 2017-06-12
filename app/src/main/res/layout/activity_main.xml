@@ -6,20 +6,24 @@
     android:layout_height="match_parent"
     tools:context="edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout">
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <Button
+            android:id="@+id/pop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter Start Location"
+            android:layout_gravity="end"
+            android:layout_marginEnd="5dp" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </android.support.design.widget.AppBarLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

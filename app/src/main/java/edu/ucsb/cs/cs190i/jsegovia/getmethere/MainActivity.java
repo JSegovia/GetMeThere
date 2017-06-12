@@ -1,6 +1,7 @@
 package edu.ucsb.cs.cs190i.jsegovia.getmethere;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,12 +11,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
-import java.sql.Time;
 import java.util.ArrayList;
 
 
@@ -40,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Get Me There ON TIME");
         context = getApplicationContext();
 
         //TODO: Hardcoded, remove later
-        events.add(new Event("Workout", "Rec Cen", new Time(11,30,0), new Time(11,45,0)));
-        events.add(new Event("Study", "Libary", new Time(12,15,0), new Time(12,45,0)));
-        events.add(new Event("Yolo", "foobar", new Time(3,20,0), new Time(4,0,0)));
+        //events.add(new Event("Workout", "Rec Cen", new Time(11,30,0), new Time(11,45,0)));
+        //events.add(new Event("Study", "Libary", new Time(12,15,0), new Time(12,45,0)));
+        //events.add(new Event("Yolo", "foobar", new Time(3,20,0), new Time(4,0,0)));
         upDateStringList(events, eventsAsStrings);
 
 
@@ -63,12 +64,14 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Event temp = events.get(position);
+                //Event temp = events.get(position);
                 eventFragment ef = new eventFragment();
-                ef.show(getFragmentManager(), "Random");
+
+                ef.show(getFragmentManager(), Integer.toString(position));
 
 
-                ((TextView) ef.getView().findViewById(R.id.location)).setText("test");
+
+                //((TextView) ef.getView().findViewById(R.id.location)).setText("test");
 
             }
 
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 eventFragment ef = new eventFragment();
-                ef.show(getFragmentManager(), "Random");
+                ef.show(getFragmentManager(), "Fab");
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

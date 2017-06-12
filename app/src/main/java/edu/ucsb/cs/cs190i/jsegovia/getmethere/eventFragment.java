@@ -43,14 +43,29 @@ public class eventFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-      final View view = inflater.inflate(R.layout.event_fragment, container, false);
-
+        final View view = inflater.inflate(R.layout.event_fragment, container, false);
 
 
         Button location = (Button) view.findViewById(R.id.location);
+        Button add = (Button) view.findViewById(R.id.ADD);
 
         final EditText activity = (EditText) view.findViewById(R.id.EventName);
         final EditText eventLocation = (EditText) view.findViewById(R.id.eventLocation);
+        final TimePicker startTime = (TimePicker) view.findViewById(R.id.StartTime);
+        final TimePicker endTime = (TimePicker) view.findViewById(R.id.EndTime);
+
+
+        if (getTag() != "Fab") {
+            add.setText("Update");
+            int index = Integer.parseInt(getTag());
+            activity.setText(events.get(index).getName());
+            eventLocation.setText(events.get(index).getLocation());
+            startTime.setHour(events.get(index).getEventStart().getHours());
+            startTime.setMinute(events.get(index).getEventStart().getMinutes());
+            endTime.setHour(events.get(index).getEventEnd().getHours());
+            endTime.setMinute(events.get(index).getEventEnd().getMinutes());
+        }
+
 
         location.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -70,11 +85,6 @@ public class eventFragment extends DialogFragment {
 
 
 
-
-
-
-
-        Button add = (Button) view.findViewById(R.id.ADD);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,11 +95,21 @@ public class eventFragment extends DialogFragment {
                 Time startTime = new Time(starter.getHour(),starter.getMinute(),0);
                 Time endTime = new Time(ender.getHour(),ender.getMinute(),0);
 
-                Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
-                e.setEventLat(place.getLatLng().latitude);
-                e.setEventLng(place.getLatLng().longitude);
+                if (getTag() == "Fab") {
+                    Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
+                    e.setEventLat(place.getLatLng().latitude);
+                    e.setEventLng(place.getLatLng().longitude);
+                    events.add(e);
 
-                events.add(e);
+                } else {
+                    int index = Integer.parseInt(getTag());
+                    events.get(index).setName(activity.getText().toString());
+                    events.get(index).setLocation(eventLocation.getText().toString());
+                    events.get(index).setEventStart(startTime);
+                    events.get(index).setEventEnd(endTime);
+                    events.get(index).setEventLat(place.getLatLng().latitude);
+                    events.get(index).setStartLng(place.getLatLng().longitude);
+                }
                 Collections.sort(events, new Comparator<Event>() {
                     @Override
                     public int compare(Event o1, Event o2) {
