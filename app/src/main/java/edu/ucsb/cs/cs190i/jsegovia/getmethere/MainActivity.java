@@ -18,18 +18,13 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    public String GOOGLEAPIKEY = "AIzaSyAiD6SA2SIvZow_JTCEIax87SLhYyF9UTo";
+    public static String GOOGLEAPIKEY = "AIzaSyC_fIizx3QXVdP18uZKiucrnz5w4UCa_nw";
     public static int PLACE_PICKER_REQUEST = 1;
     public static Context context;
     private PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -55,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
 
         //TODO: Hardcoded, remove later
-        //events.add(new Event("Workout", "Rec Cen", new Time(11,30,0), new Time(11,45,0)));
+        //events.add(new Event("Workout", "Rec Cen", new Time(11,0,0), new Time(11,45,0)));
         //events.add(new Event("Study", "Libary", new Time(12,15,0), new Time(12,45,0)));
-        //events.add(new Event("Yolo", "foobar", new Time(3,20,0), new Time(4,0,0)));
-        upDateStringList(events, eventsAsStrings);
+        //events.add(new Event("Dinner", "Blaze Pizza", new Time(5,20,0), new Time(6,0,0)));
+        //events.get(0).setStartLat(3);
+        //upDateStringList(events, eventsAsStrings);
+
 
 
 
@@ -123,29 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String timeBetweenPlaces(Place currentPlace, Place place) {
-
-        Ion.with(this)
-                .load("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" +
-                        currentPlace.getLatLng().latitude + "," + currentPlace.getLatLng().longitude +
-                        "&destinations=" + place.getLatLng().latitude + "," + place.getLatLng().longitude + "&mode=bicycling&key=" + GOOGLEAPIKEY)
-                .asString().setCallback(new FutureCallback<String>() {
-            @Override
-            public void onCompleted(Exception e, String result) {
-
-                try {
-                    JSONObject json = new JSONObject(result);
-
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                }
-
-
-            }
-
-            });
-        return null;
-    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
@@ -153,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 currentPlace = PlacePicker.getPlace(data, this);
                 String toastMsg = String.format("Place: %s", currentPlace.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-                String time = timeBetweenPlaces(currentPlace, place);
-                System.out.println(time);
+                //String time = timeBetweenPlaces(currentPlace, place);
+                //System.out.println(time);
 
             }
         }

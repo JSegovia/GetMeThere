@@ -8,7 +8,20 @@ import java.sql.Time;
 
 public class Event {
 
-    String location, name;
+    String location;
+    String name;
+
+    public String getEstTime() {
+        return estTime;
+    }
+
+    public void setEstTime(String estTime) {
+        this.estTime = estTime;
+    }
+
+    String estTime;
+
+
     Double startLng, startLat, eventLat, eventLng;
     Time eventStart, eventEnd;
 
@@ -18,6 +31,9 @@ public class Event {
         this.eventStart = eventStart;
         this.eventEnd = eventEnd;
     }
+
+
+
 
     public Time getEventStart() {
         return eventStart;

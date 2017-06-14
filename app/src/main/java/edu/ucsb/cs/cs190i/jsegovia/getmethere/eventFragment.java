@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -24,14 +31,18 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import static android.app.Activity.RESULT_OK;
+import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.GOOGLEAPIKEY;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.PLACE_PICKER_REQUEST;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.arrayAdapter;
+import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.currentPlace;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.events;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.eventsAsStrings;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.place;
 
 
 public class eventFragment extends DialogFragment {
+    public static String duration;
+    public static String mode;
 
 
     @Override
@@ -107,11 +118,20 @@ public class eventFragment extends DialogFragment {
                     return;
                 }
 
+                if (timeBetweenPlaces(currentPlace, place) == null) {
+                    return;
+
+                }
+                String temp = timeBetweenPlaces(currentPlace, place);
+                temp = timeBetweenPlaces(currentPlace, place);
+
                 if (getTag() == "Fab") {
                     Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
                     e.setEventLat(place.getLatLng().latitude);
                     e.setEventLng(place.getLatLng().longitude);
-                    events.add(e);
+                    e.setEstTime(temp);
+                    //e.setEstTime(timeBetweenPlaces(currentPlace,place));
+                    //events.add(e);
 
                 } else {
                     int index = Integer.parseInt(getTag());
@@ -121,6 +141,8 @@ public class eventFragment extends DialogFragment {
                     events.get(index).setEventEnd(endTime);
                     events.get(index).setEventLat(place.getLatLng().latitude);
                     events.get(index).setStartLng(place.getLatLng().longitude);
+                    events.get(index).setEstTime(timeBetweenPlaces(currentPlace, place));
+                    events.get(index).setEstTime(timeBetweenPlaces(currentPlace, place));
                 }
                 Collections.sort(events, new Comparator<Event>() {
                     @Override
@@ -138,7 +160,74 @@ public class eventFragment extends DialogFragment {
                 });
                 upDateStringsList(events, eventsAsStrings);
                 arrayAdapter.notifyDataSetChanged();
-                getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
+                arrayAdapter.notifyDataSetChanged();
+                //upDateStringsList(events, eventsAsStrings);
+                //getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
+
+
+                // Repeated
+
+                if (activity.getText().toString().length() == 0| eventLocation.getText().toString().length() == 0) {
+                    Toast.makeText(getActivity(), "Please fill in the text box(s)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    place.getLatLng();
+                } catch (NullPointerException e) {
+                    Toast.makeText(getActivity(), "Please pick a location", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (timeBetweenPlaces(currentPlace, place) == null) {
+                    return;
+
+                }
+                //temp = timeBetweenPlaces(currentPlace, place);
+                temp = timeBetweenPlaces(currentPlace, place);
+
+                if (getTag() == "Fab") {
+                    Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
+                    e.setEventLat(place.getLatLng().latitude);
+                    e.setEventLng(place.getLatLng().longitude);
+                    e.setEstTime(temp);
+                    //e.setEstTime(timeBetweenPlaces(currentPlace,place));
+                    events.add(e);
+
+                } else {
+                    int index = Integer.parseInt(getTag());
+                    events.get(index).setName(activity.getText().toString());
+                    events.get(index).setLocation(eventLocation.getText().toString());
+                    events.get(index).setEventStart(startTime);
+                    events.get(index).setEventEnd(endTime);
+                    events.get(index).setEventLat(place.getLatLng().latitude);
+                    events.get(index).setStartLng(place.getLatLng().longitude);
+                    events.get(index).setEstTime(timeBetweenPlaces(currentPlace, place));
+                    events.get(index).setEstTime(timeBetweenPlaces(currentPlace, place));
+                }
+                Collections.sort(events, new Comparator<Event>() {
+                    @Override
+                    public int compare(Event o1, Event o2) {
+                        if(o1.getEventEnd().before(o2.getEventStart())){
+                            return -1;
+                        }
+                        else if(o1.getEventEnd().after(o2.getEventStart())) {
+                            return 1;
+                        }
+                        else{
+                            return 0;
+                        }
+                    }
+                });
+                upDateStringsList(events, eventsAsStrings);
+                arrayAdapter.notifyDataSetChanged();
+                arrayAdapter.notifyDataSetChanged();
+
+
+
+
+
+
 
             }
 
@@ -148,7 +237,8 @@ public class eventFragment extends DialogFragment {
                 eventsAsStrings.clear();
                 for (int i = 0; i < events.size(); i++) {
                     eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() +
-                            "        Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString()));
+                            "        Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString() +
+                            "      Est time to there: " + events.get(i).getEstTime() ));
                 }
 
 
@@ -160,6 +250,36 @@ public class eventFragment extends DialogFragment {
 
         return view;
 
+    }
+
+    public String timeBetweenPlaces(Place currentPlace, Place place) {
+
+        Ion.with(this)
+                .load("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" +
+                        currentPlace.getLatLng().latitude + "," + currentPlace.getLatLng().longitude +
+                        "&destinations=" + place.getLatLng().latitude + "," + place.getLatLng().longitude + "&mode=bicycling&key=" + GOOGLEAPIKEY)
+                .asString().setCallback(new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+
+                Log.d("Called at all", "called");
+
+                try {
+                    JSONObject json = new JSONObject(result);
+                    duration = json.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+
+                    //System.out.println(duration[0]);
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+
+        });
+
+        return duration;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
