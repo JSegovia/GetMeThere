@@ -20,8 +20,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -88,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
             curr = new LatLng(loc.getLatitude(), loc.getLongitude());
 
         }
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new android.location.LocationListener() {
+/*
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60*100, 0, new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 curr = new LatLng(location.getLatitude(), location.getLongitude());
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
+*/
 
 
         Button startLoc = (Button) findViewById(R.id.startLocation);
@@ -163,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         startLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-
+                */
                 //String time = timeBetweenPlaces(currentPlace, place);
                 //System.out.println(time);
 

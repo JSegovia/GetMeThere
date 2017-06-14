@@ -11,16 +11,9 @@ public class Event {
     String location;
     String name;
 
-    public String getEstTime() {
-        return estTime;
-    }
-
-    public void setEstTime(String estTime) {
-        this.estTime = estTime;
-    }
-
     String estTime;
 
+    int durationInSeconds;
 
     Double startLng, startLat, eventLat, eventLng;
     Time eventStart, eventEnd;
@@ -32,8 +25,21 @@ public class Event {
         this.eventEnd = eventEnd;
     }
 
+    public String getEstTime() {
+        return estTime;
+    }
 
+    public void setEstTime(String estTime) {
+        this.estTime = estTime;
+    }
 
+    public int getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    public void setDurationInSeconds(int durationInSeconds) {
+        this.durationInSeconds = durationInSeconds;
+    }
 
     public Time getEventStart() {
         return eventStart;

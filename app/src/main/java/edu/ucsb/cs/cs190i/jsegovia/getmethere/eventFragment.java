@@ -43,6 +43,7 @@ import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.eventsAsString
 
 public class eventFragment extends DialogFragment {
     public static String duration;
+    public static int durationInSec;
     public String mode;
     public static Place place;
 
@@ -144,6 +145,8 @@ public class eventFragment extends DialogFragment {
                     e.setEventLat(place.getLatLng().latitude);
                     e.setEventLng(place.getLatLng().longitude);
                     e.setEstTime(duration);
+                    e.setDurationInSeconds(durationInSec);
+                    System.out.println(durationInSec);
                     //e.setEstTime(duration);
                     events.add(e);
 
@@ -236,6 +239,7 @@ public class eventFragment extends DialogFragment {
 
                     JSONObject json = new JSONObject(result);
                     duration = json.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+                    durationInSec = json.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
                     Log.d("Called at all", "called");
                     //System.out.println(duration[0]);
 
