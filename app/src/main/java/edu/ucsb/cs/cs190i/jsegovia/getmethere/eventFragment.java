@@ -1,6 +1,8 @@
 package edu.ucsb.cs.cs190i.jsegovia.getmethere;
 
+import android.app.AlarmManager;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +29,15 @@ import org.json.JSONObject;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.ALARM_SERVICE;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.GOOGLEAPIKEY;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.PLACE_PICKER_REQUEST;
+import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.appContext;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.arrayAdapter;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.curr;
 import static edu.ucsb.cs.cs190i.jsegovia.getmethere.MainActivity.currentPlace;
@@ -46,6 +51,10 @@ public class eventFragment extends DialogFragment {
     public static int durationInSec;
     public String mode;
     public static Place place;
+    private Intent alarmIntent;
+    private PendingIntent alarmPendingIntent;
+    private AlarmManager alarmManager;
+
 
 
 
@@ -146,9 +155,12 @@ public class eventFragment extends DialogFragment {
                     e.setEventLng(place.getLatLng().longitude);
                     e.setEstTime(duration);
                     e.setDurationInSeconds(durationInSec);
-                    System.out.println(durationInSec);
+                    Calendar c = Calendar.getInstance();
+                    e.setEventID(c.get(Calendar.SECOND));
                     //e.setEstTime(duration);
                     events.add(e);
+                    setAlarm(e.getEventStart(), e.getEventID(), e.getDurationInSeconds());
+                    Toast.makeText(appContext, "Event Scheduled", Toast.LENGTH_SHORT).show();
 
                 } else {
                     int index = Integer.parseInt(getTag());
@@ -159,16 +171,19 @@ public class eventFragment extends DialogFragment {
                     events.get(index).setEventLat(place.getLatLng().latitude);
                     events.get(index).setStartLng(place.getLatLng().longitude);
                     events.get(index).setEstTime(duration);
+                    events.get(index).setDurationInSeconds(durationInSec);
                     //events.get(index).setEstTime(duration);
+                    setAlarm(events.get(index).getEventStart(), events.get(index).getEventID(), events.get(index).getDurationInSeconds());
+                    Toast.makeText(appContext, "Event Updated", Toast.LENGTH_SHORT).show();
                 }
 
                 Collections.sort(events, new Comparator<Event>() {
                     @Override
                     public int compare(Event o1, Event o2) {
-                        if(o1.getEventEnd().before(o2.getEventStart())){
+                        if(o1.getEventStart().before(o2.getEventStart())){
                             return -1;
                         }
-                        else if(o1.getEventEnd().after(o2.getEventStart())) {
+                        else if(o1.getEventStart().after(o2.getEventStart())) {
                             return 1;
                         }
                         else{
@@ -219,6 +234,30 @@ public class eventFragment extends DialogFragment {
                 Toast.makeText(getActivity(), toastMsg, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public void setAlarm(Time alarmTime, int id, int duration){
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, alarmTime.getHours());
+        calendar.set(java.util.Calendar.MINUTE, alarmTime.getMinutes());
+        long durationInMilis = ((long) duration)*1000;
+        long notificationTime = calendar.getTimeInMillis() - durationInMilis - 60000;
+
+        alarmIntent = new Intent(appContext, AlarmReciever.class);
+        alarmIntent.putExtra("ID", id);
+        alarmPendingIntent = PendingIntent.getBroadcast(appContext, id , alarmIntent, 0);
+        alarmManager = (AlarmManager) appContext.getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, notificationTime, alarmPendingIntent);
+    }
+    public void cancelAlarm(int id){
+        Intent intent = new Intent(appContext, RingtoneService.class);
+        appContext.stopService(intent);
+
+        alarmIntent = new Intent(appContext, AlarmReciever.class);
+        alarmIntent.putExtra("ID", id);
+        alarmPendingIntent = PendingIntent.getBroadcast(appContext, id, alarmIntent, 0);
+        alarmManager = (AlarmManager) appContext.getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(alarmPendingIntent);
     }
 
     public void timeBetweenPlaces(Place currentPlace, Place place) {

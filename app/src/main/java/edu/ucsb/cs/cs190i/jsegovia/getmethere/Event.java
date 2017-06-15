@@ -7,6 +7,7 @@ import java.sql.Time;
  */
 
 public class Event {
+    public int eventID;
 
     String location;
     String name;
@@ -23,6 +24,13 @@ public class Event {
         this.location = location;
         this.eventStart = eventStart;
         this.eventEnd = eventEnd;
+    }
+
+    public void setEventID(int id){
+        eventID = id;
+    }
+    public int getEventID(){
+        return eventID;
     }
 
     public String getEstTime() {

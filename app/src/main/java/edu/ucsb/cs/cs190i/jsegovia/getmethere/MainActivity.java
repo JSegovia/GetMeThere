@@ -35,6 +35,7 @@ import static edu.ucsb.cs.cs190i.jsegovia.getmethere.eventFragment.duration;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static Context appContext;
 
     public static String GOOGLEAPIKEY = "AIzaSyC_fIizx3QXVdP18uZKiucrnz5w4UCa_nw";
     public static int PLACE_PICKER_REQUEST = 1;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
