@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Get Me There ON TIME");
         context = getApplicationContext();
 
-        //TODO: Hardcoded, remove later
+
         //events.add(new Event("Workout", "Rec Cen", new Time(11,0,0), new Time(11,45,0)));
         //events.add(new Event("Study", "Libary", new Time(12,15,0), new Time(12,45,0)));
         //events.add(new Event("Dinner", "Blaze Pizza", new Time(5,20,0), new Time(6,0,0)));
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 */
 
 
-        Button startLoc = (Button) findViewById(R.id.startLocation);
+       // Button startLoc = (Button) findViewById(R.id.startLocation);
         lv = (ListView) findViewById(R.id.myList);
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, eventsAsStrings);
 
@@ -160,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        startLoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        //startLoc.setOnClickListener(new View.OnClickListener() {
+            //@Override
+           // public void onClick(View v) {
                 /*
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
@@ -178,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-        });
+       // });
 
-    }
+    //}
 
     private void updateTimes(ArrayList<Event> events) {
         for (int i = 0; i < events.size(); i++) {

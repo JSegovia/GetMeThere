@@ -23,14 +23,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <Button
-            android:id="@+id/startLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="5dp"
-            android:text="Enter Start Location" />
-
 
     </android.support.v7.widget.Toolbar>
 
