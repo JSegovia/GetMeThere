@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -78,40 +79,86 @@ public class eventFragment extends DialogFragment {
         final EditText activity = (EditText) view.findViewById(R.id.EventName);
         final EditText eventLocation = (EditText) view.findViewById(R.id.eventLocation);
         final TimePicker startTime = (TimePicker) view.findViewById(R.id.StartTime);
-        final TimePicker endTime = (TimePicker) view.findViewById(R.id.EndTime);
+        //final TimePicker endTime = (TimePicker) view.findViewById(R.id.EndTime);
+        final RadioButton walking = (RadioButton) view.findViewById(R.id.Walking);
+        final RadioButton driving = (RadioButton) view.findViewById(R.id.Driving);
+        final RadioButton bicycling = (RadioButton) view.findViewById(R.id.Bicycling);
+        final Button cancel = (Button) view.findViewById(R.id.Cancel);
 
 
         if (getTag() != "Fab") {
             add.setText("Update");
+            cancel.setText("Delete");
             int index = Integer.parseInt(getTag());
             activity.setText(events.get(index).getName());
             eventLocation.setText(events.get(index).getLocation());
             startTime.setHour(events.get(index).getEventStart().getHours());
             startTime.setMinute(events.get(index).getEventStart().getMinutes());
-            endTime.setHour(events.get(index).getEventEnd().getHours());
-            endTime.setMinute(events.get(index).getEventEnd().getMinutes());
+            //endTime.setHour(events.get(index).getEventEnd().getHours());
+            //endTime.setMinute(events.get(index).getEventEnd().getMinutes());
         }
 
         Button location = (Button) view.findViewById(R.id.location);
 
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getTag() == "Fab") {
+                    getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
+                } else {
+                    events.remove(Integer.parseInt(getTag()));
+                    //upDateStringsListDeletingLocally(events, eventsAsStrings);
+                    eventsAsStrings.remove(Integer.parseInt(getTag()));
+                    arrayAdapter.notifyDataSetChanged();
+                    getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
+
+
+                }
+
+
+            }
+        });
 
 
         location.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
+                if (!walking.isChecked() && !driving.isChecked() && !bicycling.isChecked()) {
+                    Toast.makeText(getActivity(), "Pick a method of transportation", Toast.LENGTH_SHORT).show();
+                } else {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+                    } catch (GooglePlayServicesRepairableException e) {
+                        e.printStackTrace();
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
         });
 
+        driving.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mode = "driving";
+            }
+        });
+        walking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mode = "walking";
+            }
+        });
+        bicycling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mode = "bicycling";
+            }
+        });
 
 
 
@@ -120,15 +167,16 @@ public class eventFragment extends DialogFragment {
             public void onClick(View v) {
 
                 TimePicker starter = (TimePicker) view.findViewById(R.id.StartTime);
-                TimePicker ender = (TimePicker) view.findViewById(R.id.EndTime);
+                //TimePicker ender = (TimePicker) view.findViewById(R.id.EndTime);
 
                 Time startTime = new Time(starter.getHour(),starter.getMinute(),0);
-                Time endTime = new Time(ender.getHour(),ender.getMinute(),0);
+                //Time endTime = new Time(ender.getHour(),ender.getMinute(),0);
 
                 if (activity.getText().toString().length() == 0| eventLocation.getText().toString().length() == 0) {
                     Toast.makeText(getActivity(), "Please fill in the text box(s)", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
 
                 try {
                     place.getLatLng();
@@ -136,6 +184,7 @@ public class eventFragment extends DialogFragment {
                     Toast.makeText(getActivity(), "Please pick a location", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
 
 
 
@@ -150,7 +199,7 @@ public class eventFragment extends DialogFragment {
                 //temp = timeBetweenPlaces(currentPlace, place);
 
                 if (getTag() == "Fab") {
-                    Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime, endTime);
+                    Event e = new Event(activity.getText().toString(), eventLocation.getText().toString(), startTime);
                     e.setEventLat(place.getLatLng().latitude);
                     e.setEventLng(place.getLatLng().longitude);
                     e.setEstTime(duration);
@@ -167,11 +216,12 @@ public class eventFragment extends DialogFragment {
                     events.get(index).setName(activity.getText().toString());
                     events.get(index).setLocation(eventLocation.getText().toString());
                     events.get(index).setEventStart(startTime);
-                    events.get(index).setEventEnd(endTime);
+                    //events.get(index).setEventEnd(endTime);
                     events.get(index).setEventLat(place.getLatLng().latitude);
                     events.get(index).setStartLng(place.getLatLng().longitude);
                     events.get(index).setEstTime(duration);
                     events.get(index).setDurationInSeconds(durationInSec);
+
                     //events.get(index).setEstTime(duration);
                     setAlarm(events.get(index).getEventStart(), events.get(index).getEventID(), events.get(index).getDurationInSeconds());
                     Toast.makeText(appContext, "Event Updated", Toast.LENGTH_SHORT).show();
@@ -197,6 +247,7 @@ public class eventFragment extends DialogFragment {
                 //arrayAdapter.notifyDataSetChanged();
                 //upDateStringsList(events, eventsAsStrings);
                 getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
+                place = null;
 
 
 
@@ -204,15 +255,7 @@ public class eventFragment extends DialogFragment {
 
 
 
-            private void upDateStringsList(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
-                eventsAsStrings.clear();
-                for (int i = 0; i < events.size(); i++) {
-                    eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() + "\n" +
-                            "Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString() +
-                            "      Est time to there: " + events.get(i).getEstTime() ));
-                }
 
-            }
 
 
 
@@ -223,6 +266,19 @@ public class eventFragment extends DialogFragment {
 
     }
 
+    private void upDateStringsListDeletingLocally(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
+    }
+
+    public void upDateStringsList(ArrayList<Event> events, ArrayList<String> eventsAsStrings) {
+        eventsAsStrings.clear();
+        for (int i = 0; i < events.size(); i++) {
+            eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() + "\n" +
+                    "Time: " + events.get(i).getEventStart().toString() +
+                    //+ " - " + events.get(i).getEventEnd().toString() +
+                    "      Est time to there " + mode + ": " + events.get(i).getEstTime() ));
+        }
+
+    }
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

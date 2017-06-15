@@ -17,13 +17,13 @@ public class Event {
     int durationInSeconds;
 
     Double startLng, startLat, eventLat, eventLng;
-    Time eventStart, eventEnd;
+    Time eventStart;
 
-    public Event(String name, String location, Time eventStart, Time eventEnd) {
+    public Event(String name, String location, Time eventStart) {
         this.name = name;
         this.location = location;
         this.eventStart = eventStart;
-        this.eventEnd = eventEnd;
+        //this.eventEnd = eventEnd;
     }
 
     public void setEventID(int id){
@@ -57,13 +57,6 @@ public class Event {
         this.eventStart = eventStart;
     }
 
-    public Time getEventEnd() {
-        return eventEnd;
-    }
-
-    public void setEventEnd(Time eventEnd) {
-        this.eventEnd = eventEnd;
-    }
 
     public String getLocation() {
         return location;

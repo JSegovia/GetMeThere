@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         eventsAsStrings.clear();
         for (int i = 0; i < events.size(); i++) {
             eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() + "\n" +
-                    "Time: " + events.get(i).getEventStart().toString() + " - " + events.get(i).getEventEnd().toString() +
+                    "Time: " + events.get(i).getEventStart().toString() + " - " +
                     "      Est time to there: " + events.get(i).getEstTime() ));
         }
     }
