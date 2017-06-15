@@ -206,6 +206,7 @@ public class eventFragment extends DialogFragment {
                     e.setDurationInSeconds(durationInSec);
                     Calendar c = Calendar.getInstance();
                     e.setEventID(c.get(Calendar.SECOND));
+                    e.setMethod(mode);
                     //e.setEstTime(duration);
                     events.add(e);
                     setAlarm(e.getEventStart(), e.getEventID(), e.getDurationInSeconds());
@@ -221,6 +222,7 @@ public class eventFragment extends DialogFragment {
                     events.get(index).setStartLng(place.getLatLng().longitude);
                     events.get(index).setEstTime(duration);
                     events.get(index).setDurationInSeconds(durationInSec);
+                    events.get(index).setMethod(mode);
 
                     //events.get(index).setEstTime(duration);
                     setAlarm(events.get(index).getEventStart(), events.get(index).getEventID(), events.get(index).getDurationInSeconds());
@@ -275,7 +277,7 @@ public class eventFragment extends DialogFragment {
             eventsAsStrings.add(new String(events.get(i).getName() + " at " + events.get(i).getLocation() + "\n" +
                     "Time: " + events.get(i).getEventStart().toString() +
                     //+ " - " + events.get(i).getEventEnd().toString() +
-                    "      Est time to there " + mode + ": " + events.get(i).getEstTime() ));
+                    "      Est time to there " + events.get(i).getMethod() + ": " + events.get(i).getEstTime() ));
         }
 
     }

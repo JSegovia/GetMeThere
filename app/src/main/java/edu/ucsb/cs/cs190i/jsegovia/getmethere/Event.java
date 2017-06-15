@@ -12,7 +12,9 @@ public class Event {
     String location;
     String name;
 
-    String estTime;
+    String estTime, method;
+
+
 
     int durationInSeconds;
 
@@ -24,6 +26,14 @@ public class Event {
         this.location = location;
         this.eventStart = eventStart;
         //this.eventEnd = eventEnd;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public void setEventID(int id){
