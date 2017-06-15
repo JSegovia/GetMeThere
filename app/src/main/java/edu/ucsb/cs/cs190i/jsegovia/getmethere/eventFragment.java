@@ -111,6 +111,7 @@ public class eventFragment extends DialogFragment {
                     //upDateStringsListDeletingLocally(events, eventsAsStrings);
                     eventsAsStrings.remove(Integer.parseInt(getTag()));
                     arrayAdapter.notifyDataSetChanged();
+                    cancelAlarm(events.get(Integer.parseInt(getTag())).getEventID());
                     getActivity().getFragmentManager().beginTransaction().remove(eventFragment.this).commit();
 
 
